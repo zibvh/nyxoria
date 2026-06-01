@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanctum — Nyxoria Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--void:#050407;--deep:#0d0b12;--crypt:#13101c;--veil:#1e1828;--ash:#2e2640;--mist:#4a3f60;--bone:#c8bfd8;--parchment:#e8dfc8;--blood:#8b1a2f;--crimson:#c41e3a;--rose:#e85d75;--gold:#c9a84c;--pale-gold:#e8d08a;--silver:#9b97b0;--ok:#2e6e42;--ok-lt:#6bc98a;--warn:#7a6a2a;--warn-lt:#c9b84c;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',serif;min-height:100vh;}
+
+/* Layout */
+.mobile-bar{display:none;position:sticky;top:0;z-index:200;background:var(--deep);border-bottom:1px solid var(--ash);padding:.75rem 1rem;align-items:center;justify-content:space-between;}
+.mobile-bar-title{font-family:'Cinzel Decorative',serif;font-size:.88rem;color:var(--gold);}
+.hamburger{background:none;border:1px solid var(--ash);color:var(--silver);padding:.38rem .62rem;cursor:pointer;font-size:1rem;}
+.wrap{display:flex;min-height:100vh;}
+
+/* Sidebar */
+.sidebar{width:225px;background:var(--deep);border-right:1px solid var(--ash);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;transition:transform .3s;}
+.sidebar-brand{padding:1.7rem 1.3rem 1.2rem;border-bottom:1px solid var(--ash);}
+.sidebar-rune{font-size:1.5rem;color:var(--blood);margin-bottom:.35rem;}
+.sidebar-name{font-family:'Cinzel Decorative',serif;font-size:.85rem;background:linear-gradient(135deg,var(--pale-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sidebar-role{font-size:.57rem;letter-spacing:.35em;color:var(--mist);text-transform:uppercase;margin-top:.15rem;}
+.sync-row{display:flex;align-items:center;gap:.4rem;font-size:.57rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mist);margin-top:.55rem;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--mist);transition:background .4s;}
+.dot.syncing{background:var(--warn-lt);animation:pulse 1s infinite;}
+.dot.ok{background:var(--ok-lt);}
+.dot.err{background:var(--rose);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.sidebar-nav{flex:1;padding:1.2rem 0;}
+.nav-label{padding:0 1.3rem .45rem;font-size:.55rem;letter-spacing:.5em;text-transform:uppercase;color:var(--mist);}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.68rem 1.3rem;cursor:pointer;font-size:.86rem;color:var(--silver);border-left:2px solid transparent;transition:all .22s;}
+.nav-item:hover{color:var(--bone);background:rgba(255,255,255,.02);border-left-color:var(--ash);}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,.05);}
+.nav-icon{width:1.1rem;text-align:center;font-size:.9rem;}
+.badge{margin-left:auto;background:var(--blood);color:var(--parchment);font-size:.6rem;padding:.1rem .4rem;border-radius:99px;min-width:1.2rem;text-align:center;}
+.badge.dr{background:var(--warn);color:var(--warn-lt);}
+.sidebar-foot{padding:1.1rem;border-top:1px solid var(--ash);}
+.logout-btn{display:block;width:100%;background:none;border:1px solid var(--ash);color:var(--silver);padding:.5rem;font-family:'Cormorant Garamond',serif;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.logout-btn:hover{border-color:var(--crimson);color:var(--crimson);}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:250;}
+
+/* Main */
+.main{flex:1;overflow-y:auto;min-width:0;}
+.topbar{padding:1.1rem 2rem;border-bottom:1px solid var(--ash);display:flex;align-items:center;justify-content:space-between;background:var(--deep);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--parchment);}
+.topbar-sub{font-size:.76rem;color:var(--silver);font-style:italic;}
+
+.panel{display:none;padding:2rem;}
+.panel.active{display:block;animation:fadeIn .28s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.9rem;margin-bottom:1.8rem;}
+.stat{background:var(--crypt);border:1px solid var(--ash);border-top:2px solid var(--blood);padding:1.1rem;}
+.stat-val{font-family:'Cinzel Decorative',serif;font-size:2.1rem;color:var(--pale-gold);line-height:1;margin-bottom:.25rem;}
+.stat-lbl{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--mist);}
+
+/* Book rows */
+.book-list{display:flex;flex-direction:column;gap:.75rem;}
+.book-row{background:var(--crypt);border:1px solid var(--ash);display:flex;align-items:center;gap:.9rem;padding:.85rem .95rem;}
+.book-row:hover{border-color:var(--mist);}
+.thumb{width:42px;height:56px;object-fit:cover;flex-shrink:0;filter:sepia(18%);}
+.thumb-ph{width:42px;height:56px;background:var(--veil);display:flex;align-items:center;justify-content:center;color:var(--blood);font-size:1.1rem;flex-shrink:0;}
+.row-info{flex:1;min-width:0;}
+.row-title{font-family:'Cinzel Decorative',serif;font-size:.75rem;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.18rem;}
+.row-meta{font-size:.7rem;color:var(--silver);font-style:italic;}
+.row-genre{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);border:1px solid var(--blood);padding:.1rem .42rem;white-space:nowrap;flex-shrink:0;}
+.row-status{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;padding:.1rem .42rem;white-space:nowrap;flex-shrink:0;border:1px solid;}
+.row-status.published{color:var(--ok-lt);border-color:var(--ok);}
+.row-status.draft{color:var(--warn-lt);border-color:var(--warn);}
+.row-actions{display:flex;gap:.35rem;flex-shrink:0;}
+
+/* Form */
+.section-title{font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--pale-gold);margin-bottom:.9rem;padding-bottom:.65rem;border-bottom:1px solid var(--ash);display:flex;align-items:center;gap:.55rem;}
+.section-title::before{content:'⸸';color:var(--blood);}
+.form-section{margin-bottom:2rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem;}
+.form-row.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:.3rem;}
+.field label{font-size:.58rem;letter-spacing:.42em;text-transform:uppercase;color:var(--silver);}
+.field input,.field select,.field textarea{background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.62rem .82rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;outline:none;transition:border-color .3s;resize:vertical;}
+.field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--gold);}
+.field select option{background:var(--veil);}
+.field-hint{font-size:.68rem;color:var(--mist);font-style:italic;margin-top:.28rem;}
+
+.cover-zone{border:2px dashed var(--ash);padding:1.4rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:90px;}
+.cover-zone:hover{border-color:var(--gold);}
+.cover-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.cover-preview{max-height:170px;object-fit:cover;display:block;margin:0 auto;}
+.cover-icon{font-size:1.9rem;margin-bottom:.4rem;}
+.cover-text{font-size:.76rem;color:var(--mist);font-style:italic;}
+
+.chapters-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:.9rem;}
+.ch-entry{background:var(--crypt);border:1px solid var(--ash);}
+.ch-head{display:flex;align-items:center;gap:.6rem;padding:.6rem .85rem;background:var(--veil);cursor:pointer;user-select:none;}
+.ch-num{font-family:'Cinzel Decorative',serif;font-size:.62rem;color:var(--blood);flex-shrink:0;}
+.ch-display{flex:1;font-size:.86rem;color:var(--bone);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ch-toggle{color:var(--mist);font-size:.68rem;transition:transform .28s;flex-shrink:0;}
+.ch-entry.open .ch-toggle{transform:rotate(180deg);}
+.ch-body{padding:.85rem;display:none;}
+.ch-entry.open .ch-body{display:block;}
+
+/* Buttons */
+.btn{padding:.52rem 1.25rem;font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border:none;transition:all .28s;}
+.btn-primary{background:var(--blood);color:var(--parchment);}
+.btn-primary:hover{background:var(--crimson);}
+.btn-draft{background:var(--warn);color:var(--warn-lt);}
+.btn-ghost{background:none;border:1px solid var(--ash);color:var(--silver);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-ok{background:var(--ok);border:none;color:var(--ok-lt);}
+.btn-danger{background:none;border:1px solid var(--blood);color:var(--rose);}
+.btn-danger:hover{background:var(--blood);color:var(--parchment);}
+.btn-sm{padding:.28rem .75rem;font-size:.7rem;}
+.btn:disabled{opacity:.38;cursor:not-allowed;}
+.btn-row{display:flex;gap:.65rem;flex-wrap:wrap;align-items:center;}
+
+/* Settings */
+.lpp-row{display:flex;align-items:center;gap:.9rem;max-width:380px;}
+.lpp-row input[type="range"]{flex:1;-webkit-appearance:none;height:2px;background:var(--ash);}
+.lpp-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--gold);border-radius:50%;cursor:pointer;}
+.lpp-val{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--gold);min-width:2rem;text-align:right;}
+
+.danger-zone{background:rgba(139,26,47,.07);border:1px solid rgba(139,26,47,.28);padding:1.4rem;margin-top:.8rem;}
+.empty{text-align:center;padding:3rem 1.2rem;color:var(--mist);font-style:italic;}
+
+/* Save overlay */
+.save-overlay{display:none;position:fixed;inset:0;background:rgba(5,4,7,.88);z-index:5000;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;}
+.save-overlay.show{display:flex;}
+.overlay-rune{font-size:2.5rem;color:var(--blood);animation:spin 2s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay-title{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--pale-gold);}
+.overlay-sub{font-size:.78rem;color:var(--silver);font-style:italic;}
+
+/* Toast */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;background:var(--crypt);border:1px solid var(--gold);border-left:3px solid var(--gold);color:var(--pale-gold);padding:.85rem 1.2rem;font-size:.86rem;transform:translateX(200%);transition:transform .38s;z-index:10000;max-width:min(340px,calc(100vw - 2rem));}
+.toast.show{transform:translateX(0);}
+.toast.err{border-color:var(--crimson);border-left-color:var(--crimson);color:var(--rose);}
+
+.err-banner{background:rgba(139,26,47,.14);border:1px solid var(--blood);border-left:3px solid var(--crimson);color:#e06070;padding:.65rem .9rem;font-size:.8rem;margin-bottom:1.1rem;display:none;font-style:italic;}
+.err-banner.show{display:block;}
+
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:300;transform:translateX(-100%);width:min(255px,80vw);}
+  .sidebar.open{transform:translateX(0);}
+  .topbar{display:none;}
+  .panel{padding:1.1rem;}
+  .form-row{grid-template-columns:1fr;}
+  .row-genre,.row-status{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <span class="mobile-bar-title">⸸ Sanctum</span>
+  <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+</div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="save-overlay" id="saveOverlay">
+  <span class="overlay-rune">⸸</span>
+  <div class="overlay-title" id="overlayTitle">Saving…</div>
+  <div class="overlay-sub" id="overlaySub">Writing to the archive</div>
+</div>
+
+<div class="wrap">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-rune">⸸</div>
+      <div class="sidebar-name">Nyxoria</div>
+      <div class="sidebar-role">The Sanctum</div>
+      <div class="sync-row"><div class="dot" id="dot"></div><span id="syncLbl">Loading…</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Archive</div>
+      <div class="nav-item active" data-p="overview" onclick="go('overview',this)"><span class="nav-icon">◈</span> Overview</div>
+      <div class="nav-item" data-p="books" onclick="go('books',this)"><span class="nav-icon">⊞</span> Published <span class="badge" id="pubBadge">0</span></div>
+      <div class="nav-item" data-p="drafts" onclick="go('drafts',this)"><span class="nav-icon">✎</span> Drafts <span class="badge dr" id="drBadge">0</span></div>
+      <div class="nav-item" data-p="add" onclick="go('add',this)"><span class="nav-icon">✦</span> Add New Volume</div>
+      <div class="nav-label" style="margin-top:.7rem">System</div>
+      <div class="nav-item" data-p="settings" onclick="go('settings',this)"><span class="nav-icon">⚙</span> Settings</div>
+    </nav>
+    <div class="sidebar-foot"><button class="logout-btn" onclick="logout()">⎋ Sign Out</button></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div><div class="topbar-title" id="panelTitle">Overview</div><div class="topbar-sub" id="panelSub">Welcome back, Nyxoria</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+    </div>
+
+    <!-- Overview -->
+    <div class="panel active" id="panel-overview">
+      <div class="err-banner" id="errBanner"></div>
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-val" id="sPublished">—</div><div class="stat-lbl">Published</div></div>
+        <div class="stat"><div class="stat-val" id="sDrafts">—</div><div class="stat-lbl">Drafts</div></div>
+        <div class="stat"><div class="stat-val" id="sChapters">—</div><div class="stat-lbl">Chapters</div></div>
+        <div class="stat"><div class="stat-val" id="sLPP">30</div><div class="stat-lbl">Lines/Page</div></div>
+      </div>
+      <div class="section-title">Recent Volumes</div>
+      <div class="book-list" id="overviewList"></div>
+    </div>
+
+    <!-- Published -->
+    <div class="panel" id="panel-books"><div class="book-list" id="pubList"></div></div>
+
+    <!-- Drafts -->
+    <div class="panel" id="panel-drafts"><div class="book-list" id="drList"></div></div>
+
+    <!-- Add / Edit -->
+    <div class="panel" id="panel-add">
+      <input type="hidden" id="editId"/>
+      <div class="form-section">
+        <div class="section-title">Book Details</div>
+        <div class="form-row">
+          <div class="field"><label>Title *</label><input type="text" id="fTitle" placeholder="Enter the book's name…"/></div>
+          <div class="field"><label>Genre</label>
+            <select id="fGenre">
+              <option>Novel</option><option>Novella</option><option>Short Story</option>
+              <option>Poetry</option><option>Anthology</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field"><label>Cover Image</label>
+            <div class="cover-zone" id="coverZone">
+              <input type="file" accept="image/*" id="coverInput" onchange="handleCover(this)"/>
+              <div id="coverWrap"><div class="cover-icon">🖼</div><div class="cover-text">Tap or drag an image here</div></div>
+            </div>
+            <input type="hidden" id="fCoverData"/>
+            <input type="hidden" id="fCoverKeep"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="section-title">Chapters</div>
+        <div class="chapters-list" id="chaptersList"></div>
+        <button class="btn btn-ghost" onclick="addChapter()">+ Add Chapter</button>
+      </div>
+      <div class="form-section">
+        <div class="section-title">Publication</div>
+        <p style="font-size:.83rem;color:var(--silver);font-style:italic;margin-bottom:.9rem">Published books appear in the public archive. Drafts are hidden.</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveBook('published')">✦ Publish</button>
+          <button class="btn btn-draft" onclick="saveBook('draft')">✎ Save Draft</button>
+          <button class="btn btn-ghost" onclick="clearForm()">✕ Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="panel" id="panel-settings">
+      <div class="form-section">
+        <div class="section-title">Reader Configuration</div>
+        <div class="field" style="max-width:400px;margin-bottom:1.4rem">
+          <label>Lines Per Page</label>
+          <div class="lpp-row"><input type="range" id="lppRange" min="10" max="80" step="5" value="30" oninput="document.getElementById('lppVal').textContent=this.value"/><span class="lpp-val" id="lppVal">30</span></div>
+          <div class="field-hint">Saved to this device only.</div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveLPP()">Save Settings</button></div>
+      </div>
+      <div class="form-section">
+        <div class="section-title">Danger Zone</div>
+        <div class="danger-zone">
+          <p style="color:var(--silver);font-style:italic;font-size:.85rem;margin-bottom:.9rem">Permanently erase all books from the archive. Cannot be undone.</p>
+          <button class="btn btn-danger" onclick="nukeAll()">⚠ Erase All Books</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+if (sessionStorage.getItem('nyxoria_auth') !== 'true') location.href = 'admin-auth.html';
+
+const API = '';  // same origin
+let books = [];
+let lpp = parseInt(localStorage.getItem('nyxoria_lpp') || '30');
+let chCount = 0;
+
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function toast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast'+(isErr?' err':'')+' show';
+  setTimeout(() => t.className = 'toast'+(isErr?' err':''), 3600);
+}
+function setSyncStatus(state, lbl) {
+  document.getElementById('dot').className = 'dot '+state;
+  document.getElementById('syncLbl').textContent = lbl;
+}
+function showOverlay(t, s) {
+  document.getElementById('overlayTitle').textContent = t;
+  document.getElementById('overlaySub').textContent = s;
+  document.getElementById('saveOverlay').classList.add('show');
+}
+function hideOverlay() { document.getElementById('saveOverlay').classList.remove('show'); }
+
+/* ── API calls ── */
+async function apiFetch(url, opts={}) {
+  const r = await fetch(API + url, {
+    headers: {'Content-Type':'application/json'},
+    ...opts,
+    body: opts.body ? (typeof opts.body === 'string' ? opts.body : JSON.stringify(opts.body)) : undefined
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
+  return d;
+}
+
+/* ── Sync ── */
+async function sync() {
+  setSyncStatus('syncing', 'Syncing…');
+  const banner = document.getElementById('errBanner');
+  try {
+    books = await apiFetch('/api/admin/books');
+    banner.classList.remove('show');
+    renderAll(); updateBadges();
+    setSyncStatus('ok', 'Synced ✓');
+  } catch(e) {
+    setSyncStatus('err', 'Error');
+    banner.textContent = '⚠ ' + e.message;
+    banner.classList.add('show');
+    toast(e.message, true);
+  }
+}
+
+function updateBadges() {
+  document.getElementById('pubBadge').textContent = books.filter(b=>b.status==='published').length;
+  document.getElementById('drBadge').textContent  = books.filter(b=>b.status==='draft').length;
+}
+
+/* ── Render ── */
+function renderAll() { renderOverview(); renderPub(); renderDr(); }
+
+function bookRowHtml(b) {
+  const ch = b.chapters?.length || b.chapterCount || 0;
+  const sc = b.status === 'draft' ? 'draft' : 'published';
+  const thumb = b.coverData
+    ? `<img class="thumb" src="${b.coverData}" alt=""/>`
+    : `<div class="thumb-ph">⸸</div>`;
+  return `<div class="book-row">
+    ${thumb}
+    <div class="row-info">
+      <div class="row-title">${esc(b.title)}</div>
+      <div class="row-meta">${ch} chapter${ch!==1?'s':''}</div>
+    </div>
+    <span class="row-genre">${esc(b.genre||'—')}</span>
+    <span class="row-status ${sc}">${b.status==='draft'?'Draft':'Live'}</span>
+    <div class="row-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editBook('${b._id}')">Edit</button>
+      ${b.status==='draft'
+        ? `<button class="btn btn-ok btn-sm" onclick="setStatus('${b._id}','published')">Publish</button>`
+        : `<button class="btn btn-draft btn-sm" onclick="setStatus('${b._id}','draft')">Unpublish</button>`}
+      <button class="btn btn-danger btn-sm" onclick="deleteBook('${b._id}')">✕</button>
+    </div>
+  </div>`;
+}
+
+function renderOverview() {
+  const pub = books.filter(b=>b.status==='published').length;
+  const dr  = books.filter(b=>b.status==='draft').length;
+  const ch  = books.reduce((a,b)=>a+(b.chapters?.length||b.chapterCount||0), 0);
+  document.getElementById('sPublished').textContent = pub;
+  document.getElementById('sDrafts').textContent    = dr;
+  document.getElementById('sChapters').textContent  = ch;
+  document.getElementById('sLPP').textContent       = lpp;
+  updateBadges();
+  const list = document.getElementById('overviewList');
+  list.innerHTML = books.length
+    ? [...books].slice(0,6).map(bookRowHtml).join('')
+    : '<div class="empty">🕯 No volumes yet. Add your first book!</div>';
+}
+function renderPub() {
+  const pub = books.filter(b=>b.status==='published');
+  document.getElementById('pubList').innerHTML = pub.length
+    ? pub.map(bookRowHtml).join('')
+    : '<div class="empty">No published books yet.</div>';
+}
+function renderDr() {
+  const dr = books.filter(b=>b.status==='draft');
+  document.getElementById('drList').innerHTML = dr.length
+    ? dr.map(bookRowHtml).join('')
+    : '<div class="empty">No drafts saved.</div>';
+}
+
+/* ── CRUD ── */
+async function saveBook(status) {
+  const title = document.getElementById('fTitle').value.trim();
+  if (!title) { toast('Please enter a book title.', true); return; }
+  const chEls = document.querySelectorAll('#chaptersList .ch-entry');
+  if (!chEls.length) { toast('Add at least one chapter.', true); return; }
+  const chapters = [];
+  for (const el of chEls) {
+    const t = document.getElementById(el.id+'-title').value.trim();
+    const txt = document.getElementById(el.id+'-text').value;
+    if (!t) { toast('All chapters need a title.', true); return; }
+    chapters.push({ title: t, text: txt });
+  }
+  const editId = document.getElementById('editId').value;
+  const body = {
+    title,
+    genre:    document.getElementById('fGenre').value,
+    status,
+    chapters,
+    coverData: document.getElementById('fCoverData').value || document.getElementById('fCoverKeep').value || null
+  };
+  showOverlay('Saving to Archive…', 'Writing to MongoDB');
+  try {
+    if (editId) await apiFetch(`/api/admin/books/${editId}`, { method:'PUT', body });
+    else        await apiFetch('/api/admin/books', { method:'POST', body });
+    hideOverlay();
+    await sync();
+    clearForm();
+    go('overview', document.querySelector('[data-p="overview"]'));
+    toast(status==='draft' ? `"${title}" saved as draft ✎` : `"${title}" published ✦`);
+  } catch(e) { hideOverlay(); toast('Save failed: '+e.message, true); }
+}
+
+async function setStatus(id, newStatus) {
+  const book = books.find(b=>b._id===id); if (!book) return;
+  showOverlay('Updating…', '');
+  try {
+    await apiFetch(`/api/admin/books/${id}`, { method:'PUT', body: { status: newStatus } });
+    hideOverlay(); await sync();
+    toast(newStatus==='published' ? `"${book.title}" is now live ✦` : `"${book.title}" moved to drafts`);
+  } catch(e) { hideOverlay(); toast(e.message, true); }
+}
+
+async function deleteBook(id) {
+  const book = books.find(b=>b._id===id); if (!book) return;
+  if (!confirm(`Remove "${book.title}" permanently?`)) return;
+  showOverlay('Removing…', '');
+  try {
+    await apiFetch(`/api/admin/books/${id}`, { method:'DELETE' });
+    hideOverlay(); await sync(); toast('Volume removed.');
+  } catch(e) { hideOverlay(); toast(e.message, true); }
+}
+
+async function nukeAll() {
+  if (!confirm('Erase ALL books? This cannot be undone.')) return;
+  showOverlay('Purging…', '');
+  try {
+    await apiFetch('/api/admin/books', { method:'DELETE' });
+    hideOverlay(); await sync(); toast('Archive cleared.', true);
+  } catch(e) { hideOverlay(); toast(e.message, true); }
+}
+
+/* ── Book form ── */
+function addChapter(title='', text='') {
+  chCount++;
+  const id = 'ch'+chCount;
+  const el = document.createElement('div');
+  el.className='ch-entry open'; el.id=id;
+  el.innerHTML=`
+    <div class="ch-head" onclick="toggleCh('${id}')">
+      <span class="ch-num">${chCount}.</span>
+      <span class="ch-display" id="${id}-disp">${esc(title)||'New Chapter'}</span>
+      <span class="ch-toggle">▾</span>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();document.getElementById('${id}').remove()">✕</button>
+    </div>
+    <div class="ch-body">
+      <div class="field" style="margin-bottom:.75rem">
+        <label>Title *</label>
+        <input type="text" id="${id}-title" value="${esc(title)}" placeholder="Chapter name…"
+          oninput="document.getElementById('${id}-disp').textContent=this.value||'New Chapter'"/>
+      </div>
+      <div class="field">
+        <label>Text</label>
+        <textarea id="${id}-text" rows="12" placeholder="Write or paste your chapter here…">${esc(text)}</textarea>
+      </div>
+    </div>`;
+  document.getElementById('chaptersList').appendChild(el);
+}
+function toggleCh(id) { document.getElementById(id).classList.toggle('open'); }
+
+function clearForm() {
+  document.getElementById('editId').value='';
+  document.getElementById('fTitle').value='';
+  document.getElementById('fGenre').value='Novel';
+  document.getElementById('fCoverData').value='';
+  document.getElementById('fCoverKeep').value='';
+  document.getElementById('coverWrap').innerHTML='<div class="cover-icon">🖼</div><div class="cover-text">Tap or drag an image here</div>';
+  document.getElementById('chaptersList').innerHTML='';
+  chCount=0;
+}
+
+function handleCover(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('fCoverData').value = e.target.result;
+    document.getElementById('coverWrap').innerHTML = `<img class="cover-preview" src="${e.target.result}"/>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function editBook(id) {
+  go('add', document.querySelector('[data-p="add"]'));
+  document.getElementById('panelSub').textContent = 'Loading…';
+  try {
+    const book = await apiFetch(`/api/admin/books/${id}`);
+    document.getElementById('editId').value = id;
+    document.getElementById('fTitle').value = book.title;
+    document.getElementById('fGenre').value = book.genre || 'Novel';
+    document.getElementById('fCoverData').value = '';
+    document.getElementById('fCoverKeep').value = book.coverData || '';
+    document.getElementById('chaptersList').innerHTML=''; chCount=0;
+    if (book.coverData) {
+      document.getElementById('coverWrap').innerHTML = `<img class="cover-preview" src="${book.coverData}"/>`;
+    } else {
+      document.getElementById('coverWrap').innerHTML='<div class="cover-icon">🖼</div><div class="cover-text">Tap to add a cover</div>';
+    }
+    if (book.chapters) book.chapters.forEach(ch => addChapter(ch.title, ch.text));
+    document.getElementById('panelSub').textContent = `Editing: ${book.title}`;
+  } catch(e) { toast('Could not load book: '+e.message, true); }
+}
+
+/* ── Settings ── */
+function renderSettings() {
+  document.getElementById('lppRange').value = lpp;
+  document.getElementById('lppVal').textContent = lpp;
+}
+function saveLPP() {
+  lpp = parseInt(document.getElementById('lppRange').value);
+  localStorage.setItem('nyxoria_lpp', lpp);
+  document.getElementById('sLPP').textContent = lpp;
+  toast('Settings saved ✦');
+}
+
+/* ── Nav ── */
+const PANEL_META = {
+  overview: ['Overview', 'Welcome back, Nyxoria'],
+  books:    ['Published Books', 'Visible in the public archive'],
+  drafts:   ['Drafts', 'Private works in progress'],
+  add:      ['Add New Volume', 'Craft a new manuscript'],
+  settings: ['Settings', 'Configure the archive']
+};
+
+function go(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-'+id)?.classList.add('active');
+  if (el) el.classList.add('active');
+  const [t,s] = PANEL_META[id] || [id,''];
+  document.getElementById('panelTitle').textContent = t;
+  document.getElementById('panelSub').textContent   = s;
+  closeSidebar();
+  if (id==='overview') renderOverview();
+  if (id==='books') renderPub();
+  if (id==='drafts') renderDr();
+  if (id==='settings') renderSettings();
+  if (id==='add' && !document.getElementById('editId').value) {
+    clearForm(); document.getElementById('panelSub').textContent='Craft a new manuscript';
+  }
+}
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('overlay');
+  const open = s.classList.toggle('open');
+  o.style.display = open ? 'block' : 'none';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+}
+function logout() { sessionStorage.removeItem('nyxoria_auth'); location.href='admin-auth.html'; }
+
+/* ── Init ── */
+setSyncStatus('syncing','Loading…');
+sync();
+setInterval(sync, 60000);
+</script>
+</body>
+</html>

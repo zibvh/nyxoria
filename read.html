@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading — Nyxoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--void:#050407;--deep:#0d0b12;--crypt:#13101c;--veil:#1e1828;--ash:#2e2640;--mist:#4a3f60;--bone:#c8bfd8;--parchment:#e8dfc8;--blood:#8b1a2f;--crimson:#c41e3a;--rose:#e85d75;--gold:#c9a84c;--pale-gold:#e8d08a;--silver:#9b97b0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',serif;font-size:18px;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(139,26,47,.10),transparent 65%);}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--deep);border-bottom:1px solid var(--ash);padding:.68rem 1.5rem;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;}
+.back{font-size:.6rem;letter-spacing:.38em;text-transform:uppercase;color:var(--mist);text-decoration:none;padding:.42rem .82rem;border:1px solid var(--ash);transition:all .3s;flex-shrink:0;}
+.back:hover{color:var(--gold);border-color:var(--gold);}
+.topbar-title{font-family:'Cinzel Decorative',serif;font-size:.7rem;color:var(--pale-gold);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-page{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--mist);white-space:nowrap;}
+.settings-btn{background:none;border:1px solid var(--ash);color:var(--silver);padding:.38rem .78rem;font-size:.68rem;cursor:pointer;transition:all .3s;letter-spacing:.15em;font-family:'Cormorant Garamond',serif;}
+.settings-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── Settings drawer ── */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:499;}
+.drawer-mask.show{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(295px,88vw);background:var(--deep);border-left:1px solid var(--ash);padding:1.8rem 1.5rem;z-index:500;transform:translateX(110%);transition:transform .38s cubic-bezier(.23,1.12,.62,1);overflow-y:auto;}
+.drawer.open{transform:translateX(0);}
+.drawer-title{font-family:'Cinzel Decorative',serif;font-size:.82rem;color:var(--gold);margin-bottom:1.4rem;padding-bottom:.75rem;border-bottom:1px solid var(--ash);}
+.drawer-close{float:right;background:none;border:none;color:var(--mist);font-size:1.05rem;cursor:pointer;}
+.drawer-close:hover{color:var(--gold);}
+.drawer-label{display:block;font-size:.58rem;letter-spacing:.42em;text-transform:uppercase;color:var(--silver);margin-bottom:.55rem;}
+.lpp-row{display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem;}
+.lpp-row input[type="range"]{flex:1;-webkit-appearance:none;height:2px;background:var(--ash);}
+.lpp-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--gold);border-radius:50%;cursor:pointer;}
+.lpp-num{font-family:'Cinzel Decorative',serif;color:var(--gold);min-width:2rem;text-align:right;}
+.drawer-apply{display:block;width:100%;background:var(--blood);border:none;color:var(--parchment);padding:.68rem;font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:background .3s;}
+.drawer-apply:hover{background:var(--crimson);}
+
+/* ── Hero ── */
+.hero{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--ash);background:linear-gradient(to bottom,var(--deep),var(--void));}
+.hero-cover{width:min(148px,42vw);aspect-ratio:3/4;object-fit:cover;border:1px solid var(--ash);filter:sepia(14%);margin-bottom:1.4rem;box-shadow:0 8px 36px rgba(0,0,0,.65);}
+.hero-ph{width:min(148px,42vw);aspect-ratio:3/4;background:var(--veil);border:1px solid var(--ash);display:flex;align-items:center;justify-content:center;font-size:2.8rem;color:var(--blood);margin-bottom:1.4rem;}
+.hero-genre{font-size:.58rem;letter-spacing:.48em;text-transform:uppercase;color:var(--rose);margin-bottom:.45rem;}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,5vw,2.1rem);font-weight:700;background:linear-gradient(160deg,var(--pale-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.45rem;line-height:1.22;}
+.hero-author{font-family:'IM Fell English',serif;font-style:italic;color:var(--silver);font-size:.92rem;}
+.hero-rule{width:75px;height:1px;background:linear-gradient(to right,transparent,var(--blood),transparent);margin:1rem auto;}
+.hero-meta{font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--mist);}
+
+/* ── TOC ── */
+.toc-wrap{position:relative;z-index:10;max-width:680px;margin:0 auto;padding:2rem 1.5rem 1rem;}
+.toc-title{font-family:'Cinzel Decorative',serif;font-size:.82rem;color:var(--gold);margin-bottom:.95rem;text-align:center;letter-spacing:.15em;}
+.toc-list{list-style:none;}
+.toc-item{border-bottom:1px solid var(--ash);display:flex;align-items:center;gap:.9rem;padding:.62rem .45rem;cursor:pointer;transition:all .22s;}
+.toc-item:last-child{border-bottom:none;}
+.toc-item:hover{background:rgba(201,168,76,.04);padding-left:.9rem;}
+.toc-num{font-size:.6rem;letter-spacing:.38em;color:var(--blood);flex-shrink:0;width:2rem;text-align:right;}
+.toc-ch{font-size:.9rem;color:var(--bone);flex:1;}
+.toc-arr{color:var(--mist);font-size:.68rem;}
+
+/* ── Divider ── */
+.divider{display:flex;align-items:center;gap:.8rem;max-width:680px;margin:1.4rem auto;padding:0 1.5rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--ash);}
+.divider span{color:var(--blood);font-size:.95rem;}
+
+/* ── Reading ── */
+.reading{position:relative;z-index:10;max-width:680px;margin:0 auto;padding:0 1.5rem 4rem;}
+.ch-title{font-family:'Cinzel Decorative',serif;font-size:1rem;background:linear-gradient(135deg,var(--pale-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.28rem;}
+.ch-sub{font-size:.58rem;letter-spacing:.5em;text-transform:uppercase;color:var(--mist);margin-bottom:1.3rem;}
+.ch-rule{width:55px;height:1px;background:linear-gradient(to right,var(--blood),transparent);margin-bottom:1.7rem;}
+.page-text{line-height:1.9;font-size:1rem;color:var(--parchment);font-weight:300;white-space:pre-wrap;word-break:break-word;}
+
+/* ── Pagination ── */
+.pagination{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:1.8rem 1.5rem;border-top:1px solid var(--ash);}
+.pg-btn{background:none;border:1px solid var(--ash);color:var(--silver);padding:.52rem 1.2rem;font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.pg-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+.pg-btn:disabled{opacity:.28;cursor:not-allowed;}
+.pg-info{text-align:center;}
+.pg-num{font-family:'Cinzel Decorative',serif;font-size:.88rem;color:var(--pale-gold);}
+.pg-sub{font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--mist);}
+
+/* ── Chapter nav ── */
+.ch-nav{position:relative;z-index:10;display:flex;gap:1px;max-width:680px;margin:0 auto;padding:0 1.5rem 2.5rem;}
+.ch-nav-btn{flex:1;background:var(--crypt);border:1px solid var(--ash);padding:.9rem;cursor:pointer;text-align:center;transition:all .28s;font-family:'Cormorant Garamond',serif;}
+.ch-nav-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.04);}
+.ch-nav-btn.ghost{opacity:.28;cursor:default;}
+.ch-nav-btn.ghost:hover{border-color:var(--ash);background:var(--crypt);}
+.ch-nav-lbl{font-size:.56rem;letter-spacing:.42em;text-transform:uppercase;color:var(--mist);}
+.ch-nav-title{font-size:.86rem;color:var(--parchment);margin-top:.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── States ── */
+.reader-state{position:relative;z-index:10;text-align:center;padding:5rem 1.5rem;}
+.rs-rune{font-size:3rem;display:block;margin-bottom:1rem;}
+.spinning{animation:spin 2.5s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rs-msg{color:var(--mist);font-style:italic;}
+.rs-msg.err{color:var(--rose);}
+.rs-link{display:inline-block;margin-top:1rem;color:var(--gold);font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;text-decoration:none;}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;background:var(--crypt);border:1px solid var(--gold);border-left:3px solid var(--gold);color:var(--pale-gold);padding:.85rem 1.2rem;font-size:.86rem;transform:translateX(200%);transition:transform .38s;z-index:10001;max-width:min(320px,calc(100vw - 2rem));}
+.toast.show{transform:translateX(0);}
+.toast.err{border-color:var(--crimson);border-left-color:var(--crimson);color:var(--rose);}
+
+@media(max-width:480px){.reading,.toc-wrap,.ch-nav,.divider{padding-left:1rem;padding-right:1rem;}}
+</style>
+</head>
+<body>
+
+<div class="drawer-mask" id="drawerMask" onclick="closeSettings()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-title">⚙ Reader Settings <button class="drawer-close" onclick="closeSettings()">✕</button></div>
+  <label class="drawer-label">Lines Per Page</label>
+  <div class="lpp-row">
+    <input type="range" id="lppRange" min="10" max="80" step="5" value="30"
+      oninput="document.getElementById('lppNum').textContent=this.value"/>
+    <span class="lpp-num" id="lppNum">30</span>
+  </div>
+  <button class="drawer-apply" onclick="applySettings()">Apply Settings</button>
+</div>
+
+<div class="topbar">
+  <a href="index.html" class="back">← Archive</a>
+  <span class="topbar-title" id="topbarTitle">Loading…</span>
+  <span class="topbar-page" id="topbarPage"></span>
+  <button class="settings-btn" onclick="openSettings()">⚙ Settings</button>
+</div>
+
+<div id="heroEl"></div>
+<div id="mainEl">
+  <div class="reader-state">
+    <span class="rs-rune spinning">⸸</span>
+    <p class="rs-msg">Consulting the archive…</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+let lpp      = parseInt(localStorage.getItem('nyxoria_lpp') || '30');
+let book     = null;
+let chapters = [];
+let curCh    = 0;
+let curPg    = 1;
+let pages    = [];
+
+function toast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast'+(isErr?' err':'')+' show';
+  setTimeout(() => t.className = 'toast'+(isErr?' err':''), 3500);
+}
+
+/* ── Pagination ── */
+function splitPages(text, n) {
+  const lines = (text||'').split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i += n) out.push(lines.slice(i, i+n).join('\n'));
+  return out.length ? out : [''];
+}
+
+function updateTopbar() {
+  document.getElementById('topbarTitle').textContent = book?.title || '';
+  document.getElementById('topbarPage').textContent  = chapters.length
+    ? `Ch.${curCh+1}/${chapters.length} · Pg.${curPg}/${pages.length}` : '';
+}
+
+function renderPage() {
+  const ch = chapters[curCh];
+  if (!ch) return;
+  pages = splitPages(ch.text||'', lpp);
+  if (curPg > pages.length) curPg = pages.length;
+  if (curPg < 1) curPg = 1;
+
+  const total = chapters.length;
+  const prev  = chapters[curCh - 1];
+  const next  = chapters[curCh + 1];
+  const showToc = curCh === 0 && curPg === 1;
+
+  updateTopbar();
+
+  document.getElementById('mainEl').innerHTML = `
+    ${showToc ? `
+    <div class="toc-wrap">
+      <div class="toc-title">— Contents —</div>
+      <ul class="toc-list">
+        ${chapters.map((c,i) => `
+        <li class="toc-item" onclick="goChapter(${i})">
+          <span class="toc-num">${String(i+1).padStart(2,'0')}.</span>
+          <span class="toc-ch">${esc(c.title)}</span>
+          <span class="toc-arr">→</span>
+        </li>`).join('')}
+      </ul>
+    </div>` : ''}
+
+    <div class="divider"><span>⸸</span></div>
+
+    <div class="reading">
+      <div class="ch-title">${esc(ch.title)}</div>
+      <div class="ch-sub">Chapter ${curCh+1} of ${total}</div>
+      <div class="ch-rule"></div>
+      <div class="page-text">${esc(pages[curPg-1]||'')}</div>
+    </div>
+
+    <div class="pagination">
+      <button class="pg-btn" onclick="prevPage()"
+        ${curPg <= 1 && curCh <= 0 ? 'disabled' : ''}>← Prev</button>
+      <div class="pg-info">
+        <div class="pg-num">${curPg} / ${pages.length}</div>
+        <div class="pg-sub">Page</div>
+      </div>
+      <button class="pg-btn" onclick="nextPage()"
+        ${curPg >= pages.length && curCh >= total-1 ? 'disabled' : ''}>Next →</button>
+    </div>
+
+    <div class="ch-nav">
+      ${prev
+        ? `<div class="ch-nav-btn" onclick="goChapter(${curCh-1})">
+             <div class="ch-nav-lbl">← Previous Chapter</div>
+             <div class="ch-nav-title">${esc(prev.title)}</div>
+           </div>`
+        : `<div class="ch-nav-btn ghost">
+             <div class="ch-nav-lbl">← Beginning</div>
+           </div>`}
+      ${next
+        ? `<div class="ch-nav-btn" onclick="goChapter(${curCh+1})">
+             <div class="ch-nav-lbl">Next Chapter →</div>
+             <div class="ch-nav-title">${esc(next.title)}</div>
+           </div>`
+        : `<div class="ch-nav-btn ghost">
+             <div class="ch-nav-lbl">End of Book →</div>
+           </div>`}
+    </div>`;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevPage() {
+  if (curPg > 1) { curPg--; renderPage(); }
+  else if (curCh > 0) {
+    curCh--;
+    pages = splitPages(chapters[curCh].text||'', lpp);
+    curPg = pages.length;
+    renderPage();
+  }
+}
+function nextPage() {
+  if (curPg < pages.length) { curPg++; renderPage(); }
+  else if (curCh < chapters.length - 1) { curCh++; curPg = 1; renderPage(); }
+}
+function goChapter(i) {
+  curCh = Math.max(0, Math.min(i, chapters.length - 1));
+  curPg = 1;
+  renderPage();
+}
+
+/* ── Settings ── */
+function openSettings() {
+  document.getElementById('lppRange').value = lpp;
+  document.getElementById('lppNum').textContent = lpp;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerMask').classList.add('show');
+}
+function closeSettings() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerMask').classList.remove('show');
+}
+function applySettings() {
+  lpp = parseInt(document.getElementById('lppRange').value);
+  localStorage.setItem('nyxoria_lpp', lpp);
+  curPg = 1;
+  closeSettings();
+  renderPage();
+  toast('Settings applied ✦');
+}
+
+/* ── Hero ── */
+function renderHero() {
+  const cover = book.coverData
+    ? `<img class="hero-cover" src="${book.coverData}" alt="${esc(book.title)}"/>`
+    : `<div class="hero-ph">⸸</div>`;
+  document.getElementById('heroEl').innerHTML = `
+    <div class="hero">
+      ${cover}
+      <div class="hero-genre">${esc(book.genre||'—')}</div>
+      <h1 class="hero-title">${esc(book.title)}</h1>
+      <div class="hero-author">by Nyxoria</div>
+      <div class="hero-rule"></div>
+      <div class="hero-meta">${chapters.length} chapter${chapters.length!==1?'s':''}</div>
+    </div>`;
+}
+
+/* ── Init ── */
+async function init() {
+  const params = new URLSearchParams(location.search);
+  const id     = params.get('id');
+
+  if (!id) {
+    document.getElementById('mainEl').innerHTML = `
+      <div class="reader-state">
+        <span class="rs-rune">⸸</span>
+        <p class="rs-msg err">No book specified.</p>
+        <a href="index.html" class="rs-link">← Return to Archive</a>
+      </div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/books/${encodeURIComponent(id)}`);
+    if (res.status === 404) throw new Error('Volume not found or not published.');
+    if (!res.ok)            throw new Error(`Server error: HTTP ${res.status}`);
+    book     = await res.json();
+    chapters = book.chapters || [];
+    curCh    = Math.max(0, Math.min(parseInt(params.get('ch')||'0'), chapters.length-1));
+    curPg    = Math.max(1, parseInt(params.get('pg')||'1'));
+    document.title = `${book.title} — Nyxoria`;
+    renderHero();
+    renderPage();
+  } catch(e) {
+    toast(e.message, true);
+    document.getElementById('mainEl').innerHTML = `
+      <div class="reader-state">
+        <span class="rs-rune">⸸</span>
+        <p class="rs-msg err">${esc(e.message)}</p>
+        <a href="index.html" class="rs-link">← Return to Archive</a>
+      </div>`;
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (!book) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextPage();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevPage();
+});
+
+init();
+</script>
+</body>
+</html>

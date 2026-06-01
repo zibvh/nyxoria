@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyxoria — The Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--void:#050407;--deep:#0d0b12;--crypt:#13101c;--veil:#1e1828;--ash:#2e2640;--mist:#4a3f60;--bone:#c8bfd8;--parchment:#e8dfc8;--blood:#8b1a2f;--crimson:#c41e3a;--rose:#e85d75;--gold:#c9a84c;--pale-gold:#e8d08a;--silver:#9b97b0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 90% 45% at 50% -10%,rgba(139,26,47,.15) 0%,transparent 65%),
+             radial-gradient(ellipse 50% 70% at 0% 70%,rgba(74,63,96,.15) 0%,transparent 55%);}
+
+/* ── Header ── */
+.site-header{position:relative;z-index:10;text-align:center;padding:4rem 1.5rem 2.8rem;border-bottom:1px solid var(--ash);background:linear-gradient(to bottom,var(--deep) 0%,transparent 100%);}
+.hdr-rune{font-size:2rem;color:var(--blood);margin-bottom:.8rem;display:block;filter:drop-shadow(0 0 20px rgba(139,26,47,.55));animation:flicker 5s ease-in-out infinite;}
+@keyframes flicker{0%,100%{opacity:1}46%{opacity:.6}50%{opacity:1}55%{opacity:.78}60%{opacity:1}}
+.hdr-rule{height:1px;width:110px;margin:0 auto .9rem;background:linear-gradient(to right,transparent,var(--blood),transparent);}
+.site-title{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(2.4rem,7vw,4rem);
+  background:linear-gradient(165deg,#fff8e8 0%,var(--pale-gold) 40%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.06em;margin-bottom:.55rem;line-height:1.1;}
+.site-tagline{font-family:'IM Fell English',serif;font-style:italic;color:var(--silver);font-size:1.05rem;letter-spacing:.06em;}
+.hdr-divider{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.4rem;font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--mist);}
+.hdr-divider::before,.hdr-divider::after{content:'';width:55px;height:1px;background:var(--ash);}
+
+/* ── Controls ── */
+.controls{position:relative;z-index:10;padding:1.2rem 2rem;border-bottom:1px solid var(--ash);background:var(--deep);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:150px;}
+.search-wrap::before{content:'⊘';position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--mist);font-size:.85rem;pointer-events:none;}
+.search{width:100%;background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.6rem .9rem .6rem 2.3rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;outline:none;transition:border-color .3s;}
+.search:focus{border-bottom-color:var(--gold);}
+.search::placeholder{color:var(--mist);}
+.genre-sel{background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--silver);padding:.6rem .9rem;font-family:'Cormorant Garamond',serif;font-size:.9rem;outline:none;cursor:pointer;transition:border-color .3s;}
+.genre-sel:focus{border-bottom-color:var(--gold);}
+.genre-sel option{background:var(--veil);}
+.count{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mist);white-space:nowrap;}
+
+/* ── Grid ── */
+.archive{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:1.8rem;}
+
+.card{background:var(--crypt);border:1px solid var(--ash);border-top:2px solid var(--blood);display:flex;flex-direction:column;text-decoration:none;color:inherit;overflow:hidden;
+  transition:transform .35s cubic-bezier(.23,1.12,.62,1),border-color .3s,box-shadow .3s;
+  animation:cardUp .5s ease both;}
+@keyframes cardUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card:hover{transform:translateY(-6px);border-color:var(--mist);box-shadow:0 14px 45px rgba(0,0,0,.65);}
+.card-cover{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;filter:sepia(12%) brightness(.9);transition:filter .4s;}
+.card:hover .card-cover{filter:sepia(4%) brightness(1);}
+.card-ph{width:100%;aspect-ratio:3/4;background:var(--veil);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;color:var(--blood);font-size:2.6rem;border-bottom:1px solid var(--ash);}
+.card-ph span{font-size:.57rem;letter-spacing:.38em;text-transform:uppercase;color:var(--mist);}
+.card-body{padding:.95rem;flex:1;display:flex;flex-direction:column;gap:.3rem;}
+.card-genre{font-size:.57rem;letter-spacing:.42em;text-transform:uppercase;color:var(--rose);}
+.card-title{font-family:'Cinzel Decorative',serif;font-size:.8rem;line-height:1.35;color:var(--parchment);flex:1;}
+.card-meta{font-size:.7rem;color:var(--mist);font-style:italic;}
+.card-cta{display:block;margin:.55rem -.95rem -.95rem;padding:.62rem .95rem;background:rgba(139,26,47,.12);border-top:1px solid var(--ash);font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);text-align:center;transition:background .3s;}
+.card:hover .card-cta{background:rgba(139,26,47,.25);}
+
+/* ── States ── */
+.state{text-align:center;padding:5rem 1rem;}
+.state-rune{font-size:3rem;color:var(--blood);display:block;margin-bottom:1.1rem;}
+.spinning{animation:spin 2.5s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-msg{color:var(--mist);font-style:italic;}
+.state-msg.err{color:var(--rose);}
+.retry{display:inline-block;margin-top:1.2rem;color:var(--gold);font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;background:none;border:none;font-family:'Cormorant Garamond',serif;}
+
+/* ── Footer ── */
+.site-footer{position:relative;z-index:10;border-top:1px solid var(--ash);padding:2rem 1.5rem;text-align:center;color:var(--mist);font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;}
+.footer-rune{font-size:.95rem;color:var(--blood);margin-bottom:.5rem;display:block;}
+.site-footer a{color:var(--mist);text-decoration:none;transition:color .3s;}
+.site-footer a:hover{color:var(--gold);}
+@media(max-width:600px){.controls{padding:1rem;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="hdr-rune">⸸</span>
+  <div class="hdr-rule"></div>
+  <h1 class="site-title">Nyxoria</h1>
+  <p class="site-tagline">Where dark worlds are written into being</p>
+  <div class="hdr-divider">The Archive</div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <input class="search" type="search" id="searchInput" placeholder="Search the archive…" oninput="filter()"/>
+  </div>
+  <select class="genre-sel" id="genreFilter" onchange="filter()">
+    <option value="">All Genres</option>
+  </select>
+  <span class="count" id="countLabel">— volumes</span>
+</div>
+
+<main class="archive">
+  <div id="stateEl">
+    <div class="state">
+      <span class="state-rune spinning">⸸</span>
+      <p class="state-msg">Consulting the archive…</p>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span class="footer-rune">⸸</span>
+  <p>Nyxoria · The Archive · All Rights Reserved</p>
+  <p style="margin-top:.4rem"><a href="admin-auth.html">Keeper's Entrance</a></p>
+</footer>
+
+<script>
+let allBooks = [];
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function setState(html) { document.getElementById('stateEl').innerHTML = html; }
+
+function buildGenres(books) {
+  const genres = [...new Set(books.map(b=>b.genre).filter(Boolean))].sort();
+  const sel = document.getElementById('genreFilter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Genres</option>';
+  genres.forEach(g => {
+    const o = document.createElement('option');
+    o.value = g; o.textContent = g;
+    if (g === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function filter() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const genre = document.getElementById('genreFilter').value;
+  const filtered = allBooks.filter(b => {
+    const mq = !q || b.title.toLowerCase().includes(q) || (b.genre||'').toLowerCase().includes(q);
+    const mg = !genre || b.genre === genre;
+    return mq && mg;
+  });
+  renderGrid(filtered);
+  document.getElementById('countLabel').textContent = `${filtered.length} volume${filtered.length!==1?'s':''}`;
+}
+
+function renderGrid(books) {
+  if (!books.length) {
+    setState(`<div class="state"><span class="state-rune">🕯</span><p class="state-msg">No volumes found.</p></div>`);
+    return;
+  }
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  books.forEach((b, i) => {
+    const ch = b.chapterCount || 0;
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = `read.html?id=${encodeURIComponent(b._id)}`;
+    a.style.animationDelay = `${i * 0.05}s`;
+    const cover = b.coverData
+      ? `<img class="card-cover" src="${b.coverData}" alt="${esc(b.title)}" loading="lazy"/>`
+      : `<div class="card-ph">⸸<span>No Cover</span></div>`;
+    a.innerHTML = `${cover}
+      <div class="card-body">
+        <div class="card-genre">${esc(b.genre||'—')}</div>
+        <div class="card-title">${esc(b.title)}</div>
+        <div class="card-meta">${ch} chapter${ch!==1?'s':''}</div>
+        <span class="card-cta">Read Now ✦</span>
+      </div>`;
+    grid.appendChild(a);
+  });
+  setState('');
+  document.getElementById('stateEl').appendChild(grid);
+}
+
+async function init() {
+  try {
+    const res = await fetch('/api/books');
+    if (!res.ok) throw new Error(`Server error: HTTP ${res.status}`);
+    allBooks = await res.json();
+    buildGenres(allBooks);
+    filter();
+  } catch(e) {
+    setState(`<div class="state">
+      <span class="state-rune">⸸</span>
+      <p class="state-msg err">${esc(e.message)}</p>
+      <button class="retry" onclick="init()">↺ Try Again</button>
+    </div>`);
+  }
+}
+init();
+</script>
+</body>
+</html>
