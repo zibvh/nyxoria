@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sanctum — Nyxoria Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 :root{--void:#050407;--deep:#0d0b12;--crypt:#13101c;--veil:#1e1828;--ash:#2e2640;--mist:#4a3f60;--bone:#c8bfd8;--parchment:#e8dfc8;--blood:#8b1a2f;--crimson:#c41e3a;--rose:#e85d75;--gold:#c9a84c;--pale-gold:#e8d08a;--silver:#9b97b0;--ok:#2e6e42;--ok-lt:#6bc98a;--warn:#7a6a2a;--warn-lt:#c9b84c;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',serif;min-height:100vh;}
+body{background:var(--void);color:var(--bone);font-family:'Lora',Georgia,serif;min-height:100vh;}
 
 /* Layout */
 .mobile-bar{display:none;position:sticky;top:0;z-index:200;background:var(--deep);border-bottom:1px solid var(--ash);padding:.75rem 1rem;align-items:center;justify-content:space-between;}
-.mobile-bar-title{font-family:'Cinzel Decorative',serif;font-size:.88rem;color:var(--gold);}
+.mobile-bar-title{font-family:'Playfair Display',Georgia,serif;font-size:.88rem;color:var(--gold);}
 .hamburger{background:none;border:1px solid var(--ash);color:var(--silver);padding:.38rem .62rem;cursor:pointer;font-size:1rem;}
 .wrap{display:flex;min-height:100vh;}
 
@@ -20,7 +20,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .sidebar{width:225px;background:var(--deep);border-right:1px solid var(--ash);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;transition:transform .3s;}
 .sidebar-brand{padding:1.7rem 1.3rem 1.2rem;border-bottom:1px solid var(--ash);}
 .sidebar-rune{font-size:1.5rem;color:var(--blood);margin-bottom:.35rem;}
-.sidebar-name{font-family:'Cinzel Decorative',serif;font-size:.85rem;background:linear-gradient(135deg,var(--pale-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sidebar-name{font-family:'Playfair Display',Georgia,serif;font-size:.85rem;background:linear-gradient(135deg,var(--pale-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .sidebar-role{font-size:.57rem;letter-spacing:.35em;color:var(--mist);text-transform:uppercase;margin-top:.15rem;}
 .sync-row{display:flex;align-items:center;gap:.4rem;font-size:.57rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mist);margin-top:.55rem;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--mist);transition:background .4s;}
@@ -37,14 +37,14 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .badge{margin-left:auto;background:var(--blood);color:var(--parchment);font-size:.6rem;padding:.1rem .4rem;border-radius:99px;min-width:1.2rem;text-align:center;}
 .badge.dr{background:var(--warn);color:var(--warn-lt);}
 .sidebar-foot{padding:1.1rem;border-top:1px solid var(--ash);}
-.logout-btn{display:block;width:100%;background:none;border:1px solid var(--ash);color:var(--silver);padding:.5rem;font-family:'Cormorant Garamond',serif;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.logout-btn{display:block;width:100%;background:none;border:1px solid var(--ash);color:var(--silver);padding:.5rem;font-family:'Lora',Georgia,serif;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
 .logout-btn:hover{border-color:var(--crimson);color:var(--crimson);}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:250;}
 
 /* Main */
 .main{flex:1;overflow-y:auto;min-width:0;}
 .topbar{padding:1.1rem 2rem;border-bottom:1px solid var(--ash);display:flex;align-items:center;justify-content:space-between;background:var(--deep);position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--parchment);}
+.topbar-title{font-family:'Playfair Display',Georgia,serif;font-size:.95rem;color:var(--parchment);}
 .topbar-sub{font-size:.76rem;color:var(--silver);font-style:italic;}
 
 .panel{display:none;padding:2rem;}
@@ -54,7 +54,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 /* Stats */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.9rem;margin-bottom:1.8rem;}
 .stat{background:var(--crypt);border:1px solid var(--ash);border-top:2px solid var(--blood);padding:1.1rem;}
-.stat-val{font-family:'Cinzel Decorative',serif;font-size:2.1rem;color:var(--pale-gold);line-height:1;margin-bottom:.25rem;}
+.stat-val{font-family:'Playfair Display',Georgia,serif;font-size:2.1rem;color:var(--pale-gold);line-height:1;margin-bottom:.25rem;}
 .stat-lbl{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--mist);}
 
 /* Book rows */
@@ -64,7 +64,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .thumb{width:42px;height:56px;object-fit:cover;flex-shrink:0;filter:sepia(18%);}
 .thumb-ph{width:42px;height:56px;background:var(--veil);display:flex;align-items:center;justify-content:center;color:var(--blood);font-size:1.1rem;flex-shrink:0;}
 .row-info{flex:1;min-width:0;}
-.row-title{font-family:'Cinzel Decorative',serif;font-size:.75rem;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.18rem;}
+.row-title{font-family:'Playfair Display',Georgia,serif;font-size:.75rem;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.18rem;}
 .row-meta{font-size:.7rem;color:var(--silver);font-style:italic;}
 .row-genre{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);border:1px solid var(--blood);padding:.1rem .42rem;white-space:nowrap;flex-shrink:0;}
 .row-status{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;padding:.1rem .42rem;white-space:nowrap;flex-shrink:0;border:1px solid;}
@@ -73,18 +73,26 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .row-actions{display:flex;gap:.35rem;flex-shrink:0;}
 
 /* Form */
-.section-title{font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--pale-gold);margin-bottom:.9rem;padding-bottom:.65rem;border-bottom:1px solid var(--ash);display:flex;align-items:center;gap:.55rem;}
+.section-title{font-family:'Playfair Display',Georgia,serif;font-size:.9rem;color:var(--pale-gold);margin-bottom:.9rem;padding-bottom:.65rem;border-bottom:1px solid var(--ash);display:flex;align-items:center;gap:.55rem;}
 .section-title::before{content:'⸸';color:var(--blood);}
 .form-section{margin-bottom:2rem;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem;}
 .form-row.full{grid-template-columns:1fr;}
 .field{display:flex;flex-direction:column;gap:.3rem;}
 .field label{font-size:.58rem;letter-spacing:.42em;text-transform:uppercase;color:var(--silver);}
-.field input,.field select,.field textarea{background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.62rem .82rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;outline:none;transition:border-color .3s;resize:vertical;}
+.field input,.field select,.field textarea{background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.62rem .82rem;font-family:'Lora',Georgia,serif;font-size:.95rem;outline:none;transition:border-color .3s;resize:vertical;}
 .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--gold);}
 .field select option{background:var(--veil);}
 .field-hint{font-size:.68rem;color:var(--mist);font-style:italic;margin-top:.28rem;}
 
+.tags-input-wrap{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem .7rem;background:var(--veil);border:1px solid var(--ash);border-bottom:2px solid var(--ash);min-height:2.6rem;align-items:center;cursor:text;transition:border-color .3s;}
+.tags-input-wrap:focus-within{border-bottom-color:var(--gold);}
+.tag-chip{display:inline-flex;align-items:center;gap:.3rem;background:rgba(139,26,47,.18);border:1px solid rgba(139,26,47,.5);color:var(--rose);font-size:.72rem;padding:.18rem .52rem;}
+.tag-chip-del{cursor:pointer;color:var(--mist);line-height:1;font-size:.85rem;transition:color .2s;}
+.tag-chip-del:hover{color:var(--crimson);}
+.tags-real-input{border:none;outline:none;background:transparent;color:var(--parchment);font-family:'Lora',Georgia,serif;font-size:.9rem;min-width:80px;flex:1;}
+.row-views{font-size:.65rem;letter-spacing:.12em;color:var(--silver);white-space:nowrap;display:flex;align-items:center;gap:.28rem;}
+.row-views-icon{color:var(--mist);}
 .cover-zone{border:2px dashed var(--ash);padding:1.4rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:90px;}
 .cover-zone:hover{border-color:var(--gold);}
 .cover-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
@@ -95,7 +103,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .chapters-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:.9rem;}
 .ch-entry{background:var(--crypt);border:1px solid var(--ash);}
 .ch-head{display:flex;align-items:center;gap:.6rem;padding:.6rem .85rem;background:var(--veil);cursor:pointer;user-select:none;}
-.ch-num{font-family:'Cinzel Decorative',serif;font-size:.62rem;color:var(--blood);flex-shrink:0;}
+.ch-num{font-family:'Playfair Display',Georgia,serif;font-size:.62rem;color:var(--blood);flex-shrink:0;}
 .ch-display{flex:1;font-size:.86rem;color:var(--bone);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ch-toggle{color:var(--mist);font-size:.68rem;transition:transform .28s;flex-shrink:0;}
 .ch-entry.open .ch-toggle{transform:rotate(180deg);}
@@ -103,7 +111,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .ch-entry.open .ch-body{display:block;}
 
 /* Buttons */
-.btn{padding:.52rem 1.25rem;font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border:none;transition:all .28s;}
+.btn{padding:.52rem 1.25rem;font-family:'Lora',Georgia,serif;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border:none;transition:all .28s;}
 .btn-primary{background:var(--blood);color:var(--parchment);}
 .btn-primary:hover{background:var(--crimson);}
 .btn-draft{background:var(--warn);color:var(--warn-lt);}
@@ -120,7 +128,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .lpp-row{display:flex;align-items:center;gap:.9rem;max-width:380px;}
 .lpp-row input[type="range"]{flex:1;-webkit-appearance:none;height:2px;background:var(--ash);}
 .lpp-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--gold);border-radius:50%;cursor:pointer;}
-.lpp-val{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--gold);min-width:2rem;text-align:right;}
+.lpp-val{font-family:'Playfair Display',Georgia,serif;font-size:.95rem;color:var(--gold);min-width:2rem;text-align:right;}
 
 .danger-zone{background:rgba(139,26,47,.07);border:1px solid rgba(139,26,47,.28);padding:1.4rem;margin-top:.8rem;}
 .empty{text-align:center;padding:3rem 1.2rem;color:var(--mist);font-style:italic;}
@@ -130,7 +138,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
 .save-overlay.show{display:flex;}
 .overlay-rune{font-size:2.5rem;color:var(--blood);animation:spin 2s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.overlay-title{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--pale-gold);}
+.overlay-title{font-family:'Playfair Display',Georgia,serif;font-size:.95rem;color:var(--pale-gold);}
 .overlay-sub{font-size:.78rem;color:var(--silver);font-style:italic;}
 
 /* Toast */
@@ -198,6 +206,7 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
         <div class="stat"><div class="stat-val" id="sPublished">—</div><div class="stat-lbl">Published</div></div>
         <div class="stat"><div class="stat-val" id="sDrafts">—</div><div class="stat-lbl">Drafts</div></div>
         <div class="stat"><div class="stat-val" id="sChapters">—</div><div class="stat-lbl">Chapters</div></div>
+        <div class="stat"><div class="stat-val" id="sViews">—</div><div class="stat-lbl">Total Views</div></div>
         <div class="stat"><div class="stat-val" id="sLPP">30</div><div class="stat-lbl">Lines/Page</div></div>
       </div>
       <div class="section-title">Recent Volumes</div>
@@ -222,6 +231,19 @@ body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',s
               <option>Novel</option><option>Novella</option><option>Short Story</option>
               <option>Poetry</option><option>Anthology</option><option>Other</option>
             </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field"><label>Summary</label>
+            <textarea id="fSummary" rows="4" placeholder="A brief description of this book for readers…"></textarea>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field">
+            <label>Tags <span style="font-size:.6em;letter-spacing:.1em;text-transform:none;color:var(--mist)">— press Enter or comma to add</span></label>
+            <div class="tags-input-wrap" id="tagsWrap" onclick="document.getElementById('tagsInput').focus()">
+              <input type="text" id="tagsInput" class="tags-real-input" placeholder="e.g. dark fantasy, romance…" autocomplete="off"/>
+            </div>
           </div>
         </div>
         <div class="form-row full">
@@ -340,6 +362,8 @@ function renderAll() { renderOverview(); renderPub(); renderDr(); }
 function bookRowHtml(b) {
   const ch = b.chapters?.length || b.chapterCount || 0;
   const sc = b.status === 'draft' ? 'draft' : 'published';
+  const views = b.views || 0;
+  const tagChips = (b.tags||[]).slice(0,4).map(t=>`<span style="font-size:.6rem;padding:.1rem .42rem;border:1px solid rgba(139,26,47,.4);color:var(--mist);margin-right:.25rem;">${esc(t)}</span>`).join('');
   const thumb = b.coverData
     ? `<img class="thumb" src="${b.coverData}" alt=""/>`
     : `<div class="thumb-ph">⸸</div>`;
@@ -347,8 +371,9 @@ function bookRowHtml(b) {
     ${thumb}
     <div class="row-info">
       <div class="row-title">${esc(b.title)}</div>
-      <div class="row-meta">${ch} chapter${ch!==1?'s':''}</div>
+      <div class="row-meta">${ch} chapter${ch!==1?'s':''} ${tagChips}</div>
     </div>
+    <div class="row-views"><span class="row-views-icon">👁</span>${views.toLocaleString()}</div>
     <span class="row-genre">${esc(b.genre||'—')}</span>
     <span class="row-status ${sc}">${b.status==='draft'?'Draft':'Live'}</span>
     <div class="row-actions">
@@ -362,12 +387,14 @@ function bookRowHtml(b) {
 }
 
 function renderOverview() {
-  const pub = books.filter(b=>b.status==='published').length;
-  const dr  = books.filter(b=>b.status==='draft').length;
-  const ch  = books.reduce((a,b)=>a+(b.chapters?.length||b.chapterCount||0), 0);
+  const pub  = books.filter(b=>b.status==='published').length;
+  const dr   = books.filter(b=>b.status==='draft').length;
+  const ch   = books.reduce((a,b)=>a+(b.chapters?.length||b.chapterCount||0), 0);
+  const views= books.reduce((a,b)=>a+(b.views||0), 0);
   document.getElementById('sPublished').textContent = pub;
   document.getElementById('sDrafts').textContent    = dr;
   document.getElementById('sChapters').textContent  = ch;
+  document.getElementById('sViews').textContent     = views.toLocaleString();
   document.getElementById('sLPP').textContent       = lpp;
   updateBadges();
   const list = document.getElementById('overviewList');
@@ -405,6 +432,8 @@ async function saveBook(status) {
   const body = {
     title,
     genre:    document.getElementById('fGenre').value,
+    summary:  document.getElementById('fSummary').value.trim(),
+    tags:     [...currentTags],
     status,
     chapters,
     coverData: document.getElementById('fCoverData').value || document.getElementById('fCoverKeep').value || null
@@ -450,7 +479,45 @@ async function nukeAll() {
   } catch(e) { hideOverlay(); toast(e.message, true); }
 }
 
-/* ── Book form ── */
+/* ── Tags chip input ── */
+let currentTags = [];
+
+function renderTagChips() {
+  const wrap = document.getElementById('tagsWrap');
+  wrap.querySelectorAll('.tag-chip').forEach(c => c.remove());
+  const input = document.getElementById('tagsInput');
+  currentTags.forEach((tag, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${esc(tag)}<span class="tag-chip-del" onclick="removeTag(${i})">×</span>`;
+    wrap.insertBefore(chip, input);
+  });
+}
+
+function addTagFromInput() {
+  const input = document.getElementById('tagsInput');
+  const val   = input.value.replace(/,/g,'').trim();
+  if (val && !currentTags.includes(val)) { currentTags.push(val); renderTagChips(); }
+  input.value = '';
+}
+
+function removeTag(i) {
+  currentTags.splice(i, 1);
+  renderTagChips();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('tagsInput');
+  if (input) {
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTagFromInput(); }
+      if (e.key === 'Backspace' && !input.value && currentTags.length) { currentTags.pop(); renderTagChips(); }
+    });
+    input.addEventListener('blur', () => { if (input.value.trim()) addTagFromInput(); });
+  }
+});
+
+
 function addChapter(title='', text='') {
   chCount++;
   const id = 'ch'+chCount;
@@ -482,6 +549,8 @@ function clearForm() {
   document.getElementById('editId').value='';
   document.getElementById('fTitle').value='';
   document.getElementById('fGenre').value='Novel';
+  document.getElementById('fSummary').value='';
+  currentTags = []; renderTagChips();
   document.getElementById('fCoverData').value='';
   document.getElementById('fCoverKeep').value='';
   document.getElementById('coverWrap').innerHTML='<div class="cover-icon">🖼</div><div class="cover-text">Tap or drag an image here</div>';
@@ -507,6 +576,9 @@ async function editBook(id) {
     document.getElementById('editId').value = id;
     document.getElementById('fTitle').value = book.title;
     document.getElementById('fGenre').value = book.genre || 'Novel';
+    document.getElementById('fSummary').value = book.summary || '';
+    currentTags = Array.isArray(book.tags) ? [...book.tags] : [];
+    renderTagChips();
     document.getElementById('fCoverData').value = '';
     document.getElementById('fCoverKeep').value = book.coverData || '';
     document.getElementById('chaptersList').innerHTML=''; chCount=0;

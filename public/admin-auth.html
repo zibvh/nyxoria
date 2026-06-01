@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Enter — Nyxoria Sanctum</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root{--void:#050407;--deep:#0d0b12;--veil:#1e1828;--ash:#2e2640;--mist:#4a3f60;--bone:#c8bfd8;--parchment:#e8dfc8;--blood:#8b1a2f;--crimson:#c41e3a;--rose:#e85d75;--gold:#c9a84c;--pale-gold:#e8d08a;--silver:#9b97b0;}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--void);color:var(--bone);font-family:'Cormorant Garamond',serif;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;overflow:hidden;}
+  body{background:var(--void);color:var(--bone);font-family:'Lora',Georgia,serif;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:1rem;overflow:hidden;}
   body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(139,26,47,.13) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 15% 80%,rgba(74,63,96,.18) 0%,transparent 55%);}
   canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
 
@@ -19,8 +19,8 @@
 
   .rune{text-align:center;font-size:2.4rem;color:var(--blood);margin-bottom:1.1rem;filter:drop-shadow(0 0 18px rgba(139,26,47,.6));animation:flicker 5s ease-in-out infinite;}
   @keyframes flicker{0%,100%{opacity:1}46%{opacity:.6}50%{opacity:1}54%{opacity:.75}58%{opacity:1}}
-  .title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.25rem,4vw,1.6rem);font-weight:700;text-align:center;background:linear-gradient(160deg,#fffbe8,var(--pale-gold) 50%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem;letter-spacing:.04em;}
-  .sub{font-family:'IM Fell English',serif;font-style:italic;text-align:center;color:var(--silver);font-size:.88rem;margin-bottom:1.6rem;letter-spacing:.06em;}
+  .title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.25rem,4vw,1.6rem);font-weight:700;text-align:center;background:linear-gradient(160deg,#fffbe8,var(--pale-gold) 50%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem;letter-spacing:.04em;}
+  .sub{font-family:'Lora',Georgia,serif;font-style:italic;text-align:center;color:var(--silver);font-size:.88rem;margin-bottom:1.6rem;letter-spacing:.06em;}
   .divider{display:flex;align-items:center;gap:.8rem;margin-bottom:1.6rem;}
   .divider::before,.divider::after{content:'';flex:1;height:1px;}
   .divider::before{background:linear-gradient(to right,transparent,var(--ash));}
@@ -29,7 +29,7 @@
 
   .field{margin-bottom:1.1rem;}
   .field label{display:block;font-size:.6rem;letter-spacing:.45em;text-transform:uppercase;color:var(--silver);margin-bottom:.45rem;}
-  .field input{display:block;width:100%;background:rgba(30,24,40,.9);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.72rem .95rem;font-family:'Cormorant Garamond',serif;font-size:1.02rem;outline:none;transition:border-color .3s,background .3s;}
+  .field input{display:block;width:100%;background:rgba(30,24,40,.9);border:1px solid var(--ash);border-bottom:2px solid var(--ash);color:var(--parchment);padding:.72rem .95rem;font-family:'Lora',Georgia,serif;font-size:1.02rem;outline:none;transition:border-color .3s,background .3s;}
   .field input:focus{border-bottom-color:var(--gold);background:rgba(30,24,40,1);}
   .field input::placeholder{color:rgba(155,151,176,.4);}
 
@@ -37,7 +37,7 @@
   .error.show{display:block;animation:shake .35s ease;}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 
-  .btn{display:block;width:100%;background:var(--blood);border:none;color:var(--parchment);padding:.82rem;font-family:'Cinzel Decorative',serif;font-size:.78rem;letter-spacing:.3em;cursor:pointer;transition:background .3s,transform .15s;text-transform:uppercase;position:relative;overflow:hidden;}
+  .btn{display:block;width:100%;background:var(--blood);border:none;color:var(--parchment);padding:.82rem;font-family:'Playfair Display',Georgia,serif;font-size:.78rem;letter-spacing:.3em;cursor:pointer;transition:background .3s,transform .15s;text-transform:uppercase;position:relative;overflow:hidden;}
   .btn::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.05),transparent);pointer-events:none;}
   .btn:hover{background:var(--crimson);}
   .btn:active{transform:scale(.99);}

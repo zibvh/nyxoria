@@ -14,10 +14,9 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Multer — store cover images in memory as Buffer
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Only image files allowed'));
@@ -34,7 +33,10 @@ const bookSchema = new mongoose.Schema({
   title:      { type: String, required: true },
   genre:      { type: String, default: 'Novel' },
   status:     { type: String, enum: ['published', 'draft'], default: 'draft' },
-  coverData:  { type: String, default: null }, // base64 data-url
+  summary:    { type: String, default: '' },
+  tags:       { type: [String], default: [] },
+  views:      { type: Number, default: 0 },
+  coverData:  { type: String, default: null },
   chapters:   [chapterSchema],
   createdAt:  { type: Date, default: Date.now },
   updatedAt:  { type: Date, default: Date.now }
@@ -47,24 +49,26 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('✦ MongoDB connected'))
   .catch(err => { console.error('MongoDB error:', err.message); process.exit(1); });
 
-// ── Public Routes (no auth needed) ──────────────────────────────────────────
+// ── Public Routes ────────────────────────────────────────────────────────────
 
-// GET /api/books — all published books (for public index)
+// GET /api/books — all published books
 app.get('/api/books', async (req, res) => {
   try {
     const books = await Book.find({ status: 'published' })
-      .select('title genre status coverData chapters createdAt updatedAt')
+      .select('title genre status summary tags coverData chapters createdAt updatedAt views')
       .sort({ createdAt: -1 });
-    // Return chapters without text for index listing (faster)
     const lite = books.map(b => ({
-      _id:       b._id,
-      title:     b.title,
-      genre:     b.genre,
-      status:    b.status,
-      coverData: b.coverData,
+      _id:          b._id,
+      title:        b.title,
+      genre:        b.genre,
+      summary:      b.summary,
+      tags:         b.tags,
+      status:       b.status,
+      coverData:    b.coverData,
       chapterCount: b.chapters.length,
-      createdAt: b.createdAt,
-      updatedAt: b.updatedAt
+      createdAt:    b.createdAt,
+      updatedAt:    b.updatedAt,
+      views:        b.views
     }));
     res.json(lite);
   } catch (e) {
@@ -72,10 +76,14 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
-// GET /api/books/:id — single published book WITH chapters (for reader)
+// GET /api/books/:id — single published book (increments views)
 app.get('/api/books/:id', async (req, res) => {
   try {
-    const book = await Book.findOne({ _id: req.params.id, status: 'published' });
+    const book = await Book.findOneAndUpdate(
+      { _id: req.params.id, status: 'published' },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
     if (!book) return res.status(404).json({ error: 'Book not found' });
     res.json(book);
   } catch (e) {
@@ -85,7 +93,6 @@ app.get('/api/books/:id', async (req, res) => {
 
 // ── Admin Routes ─────────────────────────────────────────────────────────────
 
-// GET /api/admin/books — ALL books (published + draft)
 app.get('/api/admin/books', async (req, res) => {
   try {
     const books = await Book.find().sort({ createdAt: -1 });
@@ -95,7 +102,6 @@ app.get('/api/admin/books', async (req, res) => {
   }
 });
 
-// GET /api/admin/books/:id — single book for editing
 app.get('/api/admin/books/:id', async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -106,12 +112,17 @@ app.get('/api/admin/books/:id', async (req, res) => {
   }
 });
 
-// POST /api/admin/books — create book (JSON body with optional base64 cover)
 app.post('/api/admin/books', async (req, res) => {
   try {
-    const { title, genre, status, coverData, chapters } = req.body;
+    const { title, genre, status, summary, tags, coverData, chapters } = req.body;
     if (!title) return res.status(400).json({ error: 'Title is required' });
-    const book = new Book({ title, genre, status, coverData: coverData || null, chapters: chapters || [] });
+    const book = new Book({
+      title, genre, status,
+      summary: summary || '',
+      tags: Array.isArray(tags) ? tags.map(t => t.trim()).filter(Boolean) : [],
+      coverData: coverData || null,
+      chapters: chapters || []
+    });
     await book.save();
     res.status(201).json(book);
   } catch (e) {
@@ -119,16 +130,16 @@ app.post('/api/admin/books', async (req, res) => {
   }
 });
 
-// PUT /api/admin/books/:id — update book
 app.put('/api/admin/books/:id', async (req, res) => {
   try {
-    const { title, genre, status, coverData, chapters } = req.body;
+    const { title, genre, status, summary, tags, coverData, chapters } = req.body;
     const update = { updatedAt: new Date() };
     if (title    !== undefined) update.title    = title;
+    if (summary  !== undefined) update.summary  = summary;
     if (genre    !== undefined) update.genre    = genre;
     if (status   !== undefined) update.status   = status;
     if (chapters !== undefined) update.chapters = chapters;
-    // Only update coverData if explicitly sent (null = remove, string = new cover, undefined = keep existing)
+    if (tags     !== undefined) update.tags     = Array.isArray(tags) ? tags.map(t => t.trim()).filter(Boolean) : [];
     if (coverData !== undefined) update.coverData = coverData || null;
 
     const book = await Book.findByIdAndUpdate(req.params.id, update, { new: true });
@@ -139,7 +150,6 @@ app.put('/api/admin/books/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/admin/books/:id
 app.delete('/api/admin/books/:id', async (req, res) => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
@@ -150,7 +160,6 @@ app.delete('/api/admin/books/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/admin/books — delete ALL books
 app.delete('/api/admin/books', async (req, res) => {
   try {
     await Book.deleteMany({});
@@ -160,27 +169,25 @@ app.delete('/api/admin/books', async (req, res) => {
   }
 });
 
-// ── Stats ────────────────────────────────────────────────────────────────────
 app.get('/api/admin/stats', async (req, res) => {
   try {
     const [published, drafts, all] = await Promise.all([
       Book.countDocuments({ status: 'published' }),
       Book.countDocuments({ status: 'draft' }),
-      Book.find().select('chapters')
+      Book.find().select('chapters views')
     ]);
     const totalChapters = all.reduce((sum, b) => sum + b.chapters.length, 0);
-    res.json({ published, drafts, totalChapters });
+    const totalViews    = all.reduce((sum, b) => sum + (b.views || 0), 0);
+    res.json({ published, drafts, totalChapters, totalViews });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// ── Catch-all — serve index.html for SPA routing ─────────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✦ Nyxoria running at http://localhost:${PORT}`);
 });
